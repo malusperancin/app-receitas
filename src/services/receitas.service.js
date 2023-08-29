@@ -1,6 +1,6 @@
 export const ReceitasService = {
     async getAllReceitas() {
-      const API_URL = 'http://192.168.15.5:3000';
+      const API_URL = 'http://177.8.110.85:3000';
       try {
         const response = await fetch(`${API_URL}/receitas`, {
           method: 'GET',
