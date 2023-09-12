@@ -2,17 +2,34 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { useEffect, useState } from 'react';
 import { ReceitasService } from './src/services';
-import { CardReceita } from './src/components';
+import { CardReceita, Search, Header } from './src/components';
 
 export default function App() {
-  const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]); // Armazena os dados originais
+  const [filteredData, setFilteredData] = useState([]); // Armazena os dados filtrados
+  const [searchText, setSearchText] = useState("");
+
+  const filterReceitas = (text) => {
+    if (text === "") {
+      return originalData; // Retorna os dados originais se a pesquisa estiver vazia
+    } else {
+      return originalData.filter((item) =>
+        item.titulo.toLowerCase().includes(text.toLowerCase())
+      );
+    }
+  };
+
+  useEffect(() => {
+    // Atualize filteredData ao invés de data
+    setFilteredData(filterReceitas(searchText));
+  }, [searchText, originalData]);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const receivedData = await ReceitasService.getAllReceitas();
         if (receivedData !== undefined) {
-          setData(receivedData);
+          setOriginalData(receivedData); // Atualize os dados originais
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -21,16 +38,16 @@ export default function App() {
     getData();
   }, []);
 
-
   return (
     <>
-      <Text> RECEITADS </Text>
+      <Header/>
       <View style={styles.container}>
-        {data.length > 0 && (
+        <Search setSearchText={setSearchText}></Search>
+        {filteredData.length > 0 && ( // Use filteredData em vez de data
           <FlatList
-            keyExtractor={item => item.id.toString()} // Certifique-se de que item.id seja uma string ou converta corretamente
-            data={data}
-            renderItem={({ item }) => <CardReceita item={item}></ CardReceita>}
+            keyExtractor={(item) => item.id.toString()}
+            data={filteredData}
+            renderItem={({ item }) => <CardReceita item={item}></CardReceita>}
           />
         )}
         <StatusBar style="auto" />
