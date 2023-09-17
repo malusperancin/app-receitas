@@ -25,9 +25,9 @@ export function CardReceita(props) {
             {isCardOpen ? (
                 <View style={styles.containerExtended}>
                     <Text style={styles.subtitle}>Ingredientes:</Text>
-                    {ingredientes.map((ingrediente) => {
+                    {ingredientes.map((ingrediente, index) => {
                         return(
-                            <Text>•{ingrediente}</Text>
+                            <Text key={index}>•{ingrediente}</Text>
                         )
                     })}
                     <Text style={styles.subtitle}>Procedimento: </Text>
